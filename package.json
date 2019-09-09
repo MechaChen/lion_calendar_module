@@ -1,0 +1,29 @@
+{
+  "name": "lion_calendar_module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/MechaChen/lion_calendar_module.git",
+  "author": "Benson Chen <tumlivein@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev-server": "webpack-dev-server"
+  },
+  "dependencies": {
+    "babel-cli": "6.24.1",
+    "babel-core": "6.25.0",
+    "babel-loader": "7.1.1",
+    "babel-plugin-transform-class-properties": "6.24.1",
+    "babel-plugin-transform-object-rest-spread": "6.23.0",
+    "babel-preset-env": "1.5.2",
+    "babel-preset-react": "6.24.1",
+    "css-loader": "0.28.4",
+    "node-sass": "4.12.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "reset.css": "2.0.2",
+    "sass-loader": "6.0.6",
+    "style-loader": "0.18.2",
+    "webpack": "3.1.0",
+    "webpack-dev-server": "2.5.1"
+  }
+}
