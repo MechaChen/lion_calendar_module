@@ -1,0 +1,12 @@
+.week-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.week-wrapper__weekday {
+  flex-grow: 1;
+  text-align: center;
+  padding: 5px 0;
+  color: $fontColor;
+  font-weight: 700;
+}
