@@ -47,7 +47,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
               <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status--waiting hasChance">
+                <span className="schedules__item__status-info__status hasChance">
                   候補
                 </span>
                 <span>可賣：0</span>
@@ -82,7 +82,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
               <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status--waiting hasChance">
+                <span className="schedules__item__status-info__status hasChance">
                   預定
                 </span>
                 <span>可賣：0</span>
@@ -109,7 +109,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
               <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status--waiting hasChance">
+                <span className="schedules__item__status-info__status hasChance">
                   候補
                 </span>
                 <span>可賣：0</span>
@@ -133,7 +133,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
               <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status--waiting hasChance">
+                <span className="schedules__item__status-info__status hasChance">
                   請洽專員
                 </span>
                 <span>可賣：0</span>
@@ -168,7 +168,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
               <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status--waiting noChance">
+                <span className="schedules__item__status-info__status noChance">
                   關團
                 </span>
                 <span>可賣：0</span>
@@ -203,7 +203,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
               <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status--waiting noChance">
+                <span className="schedules__item__status-info__status noChance">
                   額滿
                 </span>
                 <span>可賣：0</span>
@@ -252,7 +252,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
               <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status--waiting hasChance">
+                <span className="schedules__item__status-info__status hasChance">
                   候補
                 </span>
                 <span>可賣：0</span>
