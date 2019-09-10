@@ -1,0 +1,130 @@
+.schedules__row {
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row wrap;
+  border-left: 0.5px solid $borderColor;
+  border-right: 0.5px solid $borderColor;
+}
+
+.schedules__item {
+  width: percentage(1 / 7);
+  border: 0.5px solid $borderColor;
+  box-sizing: border-box;
+  height: 85px;
+  cursor: pointer;
+  margin-top: -1px;
+  font-size: $xs-size;
+  color: $fontColor;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  &.other-month {
+    background: $noDataItem;
+  }
+}
+
+.list {
+  .schedules__item {
+    width: 100%;
+    height: 62px;
+    flex-flow: row nowrap;
+    &.no-data {
+      display: none;
+    }
+  }
+}
+
+.schedules__item__time-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  &__date {
+    padding-left: 3px;
+  }
+  &__weekday {
+    display: none;
+  }
+  &__guaranteed {
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    background-color: $guaranteedColor;
+    &.not-enough {
+      visibility: hidden;
+    }
+  }
+}
+
+.list {
+  .schedules__item__time-info {
+    flex-flow: column nowrap;
+    justify-content: center;
+    padding: 0 5px;
+    &__date {
+      font-size: $l-size;
+    }
+    &__weekday {
+      display: block;
+      font-size: $m-size;
+    }
+    &__guaranteed {
+      display: none;
+    }
+  }
+}
+
+.schedules__item__status-info {
+  flex-grow: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  padding: 3px;
+  &__guaranteed {
+    display: none;
+  }
+  &__price {
+    color: $priceColor;
+  }
+  .hasChance {
+    color: $hasChance;
+  }
+  .noChance {
+    color: $noChance;
+  }
+}
+
+.list {
+  .schedules__item__status-info {
+    flex-flow: row wrap;
+    align-items: center;
+    padding: 5px;
+    font-size: $m-size;
+    span {
+      &:nth-child(2),
+      &:nth-child(3) {
+        width: 20%;
+      }
+    }
+    &__status {
+      order: 1;
+      width: 60%;
+      text-align: right;
+    }
+    &__guaranteed {
+      display: block;
+      order: 1;
+      font-size: $s-size;
+      background: $listGuranteed;
+      color: #fff;
+      line-height: 1.5;
+      padding: 0 5px;
+      border-radius: 3px;
+    }
+    &__price {
+      order: 1;
+    }
+  }
+}

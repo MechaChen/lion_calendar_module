@@ -2,7 +2,6 @@
   display: flex;
   justify-content: space-between;
   border-top: 3px solid $tabWrapperBg;
-  border-bottom: 1px solid $tabWrapperBg;
 }
 
 .tab-wrapper__prev-btn,
@@ -45,11 +44,22 @@
 .tab-wrapper__tab {
   flex-grow: 1;
   justify-content: space-between;
-  line-height: 50px;
+  height: 50px;
   text-align: center;
   color: $fontColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   &.target {
+    flex-flow: column nowrap;
     background: #fff;
     color: #f00;
+    span {
+      display: inline-block;
+      color: $noSchedule;
+      font-size: $s-size;
+      margin: 3px 0 -3px;
+    }
   }
 }
