@@ -140,7 +140,7 @@ class Calendar extends React.Component {
                 </span>
               </div>
             </li>
-            <li className="schedules__item">
+            <li className="schedules__item target">
               <div className="schedules__item__time-info">
                 <span className="schedules__item__time-info__date">7</span>
                 <span className="schedules__item__time-info__weekday">
