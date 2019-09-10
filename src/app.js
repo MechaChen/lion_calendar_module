@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import Tabs from "./components/Tabs.jsx";
+import Weeks from "./components/Weeks.jsx";
 import "reset.css/reset.css";
 import "./styles/style.scss";
 
@@ -8,27 +10,8 @@ class Calendar extends React.Component {
   render() {
     return (
       <>
-        <div className="tab-wrapper">
-          <a className="tab-wrapper__prev-btn" href="none:"></a>
-          <ul className="tab-wrapper__tabs">
-            <li className="tab-wrapper__tab">2017 5月</li>
-            <li className="tab-wrapper__tab">2017 6月</li>
-            <li className="tab-wrapper__tab target">
-              2017 7月
-              <span className="tab-wrapper__tab__no-schedule">無出發日</span>
-            </li>
-          </ul>
-          <a className="tab-wrapper__next-btn" href="none:"></a>
-        </div>
-        <ul className="week-wrapper list">
-          <li className="week-wrapper__weekday">星期日</li>
-          <li className="week-wrapper__weekday">星期一</li>
-          <li className="week-wrapper__weekday">星期二</li>
-          <li className="week-wrapper__weekday">星期三</li>
-          <li className="week-wrapper__weekday">星期四</li>
-          <li className="week-wrapper__weekday">星期五</li>
-          <li className="week-wrapper__weekday">星期六</li>
-        </ul>
+        <Tabs />
+        <Weeks />
         <div className="schedules list">
           {/* 第一周 */}
           <ul className="schedules__row">
