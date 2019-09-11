@@ -1,6 +1,6 @@
 import React from "react";
 
-const Weeks = () => {
+const WeekDays = () => {
   return (
     <ul className="week-wrapper">
       <li className="week-wrapper__weekday">星期日</li>
@@ -14,4 +14,4 @@ const Weeks = () => {
   );
 };
 
-export default Weeks;
+export default WeekDays;

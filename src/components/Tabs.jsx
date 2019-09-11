@@ -3,7 +3,7 @@ import moment from "moment";
 
 const Tabs = ({
   months,
-  fShow,
+  mMonth,
   targetMonth,
   handlePrevMonth,
   handleNextMonth,
@@ -18,7 +18,7 @@ const Tabs = ({
       ></a>
       <ul className="tab-wrapper__tabs">
         {months.map((month, index) => {
-          if (fShow - 1 <= index && index < fShow + 2)
+          if (mMonth - 1 <= index && index < mMonth + 2)
             return (
               <li
                 key={index}
