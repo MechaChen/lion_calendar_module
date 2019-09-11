@@ -1,21 +1,48 @@
 import React from "react";
+import moment from "moment";
 
-const Tabs = () => {
+const Tabs = ({
+  months,
+  fShow,
+  targetMonth,
+  handlePrevMonth,
+  handleNextMonth,
+  handleTargetMonth
+}) => {
   return (
-    <>
-      <div className="tab-wrapper">
-        <a className="tab-wrapper__prev-btn" href="none:"></a>
-        <ul className="tab-wrapper__tabs">
-          <li className="tab-wrapper__tab">2017 5月</li>
-          <li className="tab-wrapper__tab">2017 6月</li>
-          <li className="tab-wrapper__tab target">
-            2017 7月
-            <span className="tab-wrapper__tab__no-schedule">無出發日</span>
-          </li>
-        </ul>
-        <a className="tab-wrapper__next-btn" href="none:"></a>
-      </div>
-    </>
+    <div className="tab-wrapper">
+      <a
+        onClick={handlePrevMonth}
+        className="tab-wrapper__prev-btn"
+        href="none:"
+      ></a>
+      <ul className="tab-wrapper__tabs">
+        {months.map((month, index) => {
+          if (fShow - 1 <= index && index < fShow + 2)
+            return (
+              <li
+                key={index}
+                onClick={() => handleTargetMonth(index)}
+                className={`tab-wrapper__tab ${
+                  targetMonth === index ? "target" : ""
+                }`}
+              >
+                {moment(month).format("YYYY MM[月]")}
+                {false && (
+                  <span className="tab-wrapper__tab__no-schedule">
+                    無出發日
+                  </span>
+                )}
+              </li>
+            );
+        })}
+      </ul>
+      <a
+        onClick={handleNextMonth}
+        className="tab-wrapper__next-btn"
+        href="none:"
+      ></a>
+    </div>
   );
 };
 

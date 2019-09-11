@@ -2,7 +2,7 @@ import React from "react";
 
 const Weeks = () => {
   return (
-    <ul className="week-wrapper list">
+    <ul className="week-wrapper">
       <li className="week-wrapper__weekday">星期日</li>
       <li className="week-wrapper__weekday">星期一</li>
       <li className="week-wrapper__weekday">星期二</li>

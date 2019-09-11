@@ -1,18 +1,71 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import moment from "moment";
+import axios from "axios";
 import Tabs from "./components/Tabs.jsx";
 import Weeks from "./components/Weeks.jsx";
 import "reset.css/reset.css";
 import "./styles/style.scss";
 
 class Calendar extends React.Component {
-  state = {};
+  state = {
+    months: [],
+    // Middle Show Month Index
+    fShow: 1,
+    targetMonth: 1
+  };
+
+  handlePrevMonth = () => {
+    this.setState(prevState => {
+      if (this.state.fShow > 1)
+        return { fShow: prevState.fShow - 1, targetMonth: prevState.fShow - 1 };
+    });
+  };
+
+  handleNextMonth = () => {
+    const { months, fShow } = this.state;
+    this.setState(prevState => {
+      if (fShow < months.length - 2)
+        return { fShow: prevState.fShow + 1, targetMonth: prevState.fShow + 1 };
+    });
+  };
+
+  handleTargetMonth = index => {
+    const { months, fShow } = this.state;
+    console.log(fShow, index);
+    if (index >= 1 && index <= months.length - 2) {
+      this.setState(() => ({ fShow: index, targetMonth: index }));
+    } else {
+      this.setState(() => ({ targetMonth: index }));
+    }
+  };
+
+  componentDidMount() {
+    axios.get("./json/data1.json").then(({ data }) => {
+      let months = [];
+      data.filter(({ date }) => {
+        const month = moment(date.replace(/\//g, "-")).format("YYYY-MM");
+        if (months.indexOf(month) === -1) months = [...months, month];
+      });
+      months.sort((a, b) => (a < b ? -1 : 1));
+      this.setState(() => ({ months }));
+    });
+  }
   render() {
+    const { months, fShow, targetMonth } = this.state;
+    const { handlePrevMonth, handleNextMonth, handleTargetMonth } = this;
     return (
       <>
-        <Tabs />
+        <Tabs
+          months={months}
+          fShow={fShow}
+          targetMonth={targetMonth}
+          handlePrevMonth={handlePrevMonth}
+          handleNextMonth={handleNextMonth}
+          handleTargetMonth={handleTargetMonth}
+        />
         <Weeks />
-        <div className="schedules list">
+        <div className="schedules">
           {/* 第一周 */}
           <ul className="schedules__row">
             <li className="schedules__item no-data other-month"></li>

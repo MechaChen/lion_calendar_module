@@ -12,7 +12,7 @@
   box-sizing: border-box;
   height: 85px;
   cursor: pointer;
-  margin-top: -1px;
+  // margin-top: -1px;
   font-size: $xs-size;
   color: $fontColor;
   display: flex;
@@ -21,7 +21,7 @@
   &.other-month {
     background: $noDataItem;
   }
-  &:hover,
+  &:hover:not(.other-month),
   &.target {
     background: $hoverItem;
     position: relative;
@@ -68,6 +68,8 @@
     line-height: 20px;
     color: #fff;
     background-color: $guaranteedColor;
+    position: relative;
+    left: 1px;
     &.not-enough {
       visibility: hidden;
     }
