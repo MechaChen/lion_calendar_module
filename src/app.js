@@ -16,35 +16,37 @@ class Calendar extends React.Component {
     targetMonth: 1,
     schedules: [],
     thisMonthSchedules: [],
-    firstWeekDay: undefined,
     isList: false,
     curPage: 1
   };
 
   handlePrevMonth = () => {
-    const { mMonth, targetMonth } = this.state;
-    this.setState(prevState => {
-      if (mMonth > 1)
+    this.setState(({ mMonth, targetMonth }) => {
+      if (mMonth > 1) {
         return {
-          mMonth: prevState.mMonth - 1,
-          targetMonth: prevState.mMonth - 1
+          mMonth: mMonth - 1,
+          targetMonth: mMonth - 1
         };
-      else if (targetMonth === 1)
-        return { targetMonth: prevState.targetMonth - 1 };
+      } else if (targetMonth === 1) {
+        return { targetMonth: targetMonth - 1 };
+      }
     });
+    this.setFirstPage();
   };
 
   handleNextMonth = () => {
-    const { months, mMonth, targetMonth } = this.state;
-    this.setState(prevState => {
-      if (mMonth < months.length - 2)
+    const { months } = this.state;
+    this.setState(({ mMonth, targetMonth }) => {
+      if (mMonth < months.length - 2) {
         return {
-          mMonth: prevState.mMonth + 1,
-          targetMonth: prevState.mMonth + 1
+          mMonth: mMonth + 1,
+          targetMonth: mMonth + 1
         };
-      else if (targetMonth === months.length - 2)
-        return { targetMonth: prevState.targetMonth + 1 };
+      } else if (targetMonth === months.length - 2) {
+        return { targetMonth: targetMonth + 1 };
+      }
     });
+    this.setFirstPage();
   };
 
   handleTargetMonth = index => {
@@ -54,6 +56,7 @@ class Calendar extends React.Component {
     } else {
       this.setState(() => ({ targetMonth: index }));
     }
+    this.setFirstPage();
   };
 
   handleTargetSchedule = e => {
@@ -64,8 +67,15 @@ class Calendar extends React.Component {
     this.setState(() => ({ isList: !this.state.isList }));
   };
 
+  handlePage = curPage => {
+    this.setState(() => ({ curPage }));
+  };
+
+  setFirstPage = () => {
+    this.setState(() => ({ curPage: 1 }));
+  };
+
   componentDidMount() {
-    const { targetMonth } = this.state;
     axios.get("./json/data1.json").then(({ data }) => {
       const schedules = data.reduce(function(all, schedule) {
         const newDate = schedule.date.replace(/\//g, "-");
@@ -77,21 +87,35 @@ class Calendar extends React.Component {
         if (months.indexOf(month) === -1) months = [...months, month];
       });
       months.sort((a, b) => (a < b ? -1 : 1));
-      const firstWeekDay = moment(months[targetMonth])
-        .startOf("month")
-        .weekday();
       this.setState(() => ({
         schedules,
-        months,
-        firstWeekDay
+        months
       }));
     });
   }
 
   render() {
-    const { schedules, months, mMonth, targetMonth, isList } = this.state;
-    const { handlePrevMonth, handleNextMonth, handleTargetMonth } = this;
+    // state
+    const {
+      schedules,
+      months,
+      mMonth,
+      targetMonth,
+      isList,
+      curPage
+    } = this.state;
+
+    // Method
+    const {
+      handlePrevMonth,
+      handleNextMonth,
+      handleTargetMonth,
+      handlePage
+    } = this;
+
+    // 上個月
     const beforeDates = moment(months[targetMonth]).weekday();
+    // 本月
     const monthDates = parseInt(
       moment(months[targetMonth])
         .endOf("month")
@@ -103,12 +127,24 @@ class Calendar extends React.Component {
           moment(schedule.date).format("YYYY-MM") === months[targetMonth]
       )
       .sort((a, b) => (a.date < b.date ? -1 : 1));
+    // 下個月
     const afterDates = 42 - monthDates - beforeDates;
-    const arr = thisMonthSchedules.map(schedule =>
+    const thisMonthDates = thisMonthSchedules.map(schedule =>
       parseInt(moment(schedule.date).format("D"))
     );
-    const listArr = thisMonthSchedules.slice(0, 8);
-    console.log(listArr);
+    console.log(thisMonthSchedules);
+    const totalPage = Math.ceil(thisMonthSchedules.length / 8);
+    const pageList = [];
+    for (let i = 0; i < totalPage; i++) {
+      const start = i * 8;
+      const end = (i + 1) * 8;
+      pageList.push(thisMonthSchedules.slice(start, end));
+    }
+    console.log(pageList);
+    const start = (curPage - 1) * 8;
+    const end = curPage * 8;
+    const listArr = thisMonthSchedules.slice(start, end);
+
     return (
       <>
         <div className="toggleList">
@@ -137,8 +173,9 @@ class Calendar extends React.Component {
               ))}
             {!isList &&
               [...Array(monthDates).keys()].map((date, index) => {
-                if (arr.indexOf(index + 1) > -1) {
-                  const schedule = thisMonthSchedules[arr.indexOf(index + 1)];
+                if (thisMonthDates.indexOf(index + 1) > -1) {
+                  const schedule =
+                    thisMonthSchedules[thisMonthDates.indexOf(index + 1)];
                   return (
                     <li key={index} className="schedules__item">
                       <div className="schedules__item__time-info">
@@ -251,6 +288,21 @@ class Calendar extends React.Component {
                 </li>
               ))}
           </ul>
+          {isList && (
+            <div className="schedule__pagination">
+              <ul className="schedule__pages">
+                {[...Array(totalPage).keys()].map(page => (
+                  <li
+                    onClick={() => handlePage(page + 1)}
+                    className="schedule__page"
+                    key={page}
+                  >
+                    {page + 1}/{totalPage}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </>
     );
