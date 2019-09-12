@@ -82,40 +82,27 @@ class Calendar extends React.Component {
   }
 
   render() {
-    const {
-      schedules,
-      months,
-      mMonth,
-      targetMonth,
-      thisMonthSchedules,
-      firstWeekDay
-    } = this.state;
+    const { schedules, months, mMonth, targetMonth } = this.state;
     const { handlePrevMonth, handleNextMonth, handleTargetMonth } = this;
-    const scheduleDates = thisMonthSchedules
-      .map(({ date }) => {
-        return moment(date).date();
-      })
-      .sort((a, b) => (a < b ? -1 : 1));
-    const curMonth = months[targetMonth];
-    const beforeDates = moment(curMonth).weekday();
-    const beforeArray = [...Array(beforeDates)];
-    const curSchedules = schedules.filter(
-      schedule => moment(schedule.date).format("YYYY-MM") === curMonth
+    const beforeDates = moment(months[targetMonth]).weekday();
+    const monthDates = parseInt(
+      moment(months[targetMonth])
+        .endOf("month")
+        .format("DD")
     );
-    const curDates = curSchedules.map(curSchedule =>
-      parseInt(moment(curSchedule.date).format("D"))
+    console.log(monthDates);
+    const thisMonthSchedules = schedules
+      .filter(
+        schedule =>
+          moment(schedule.date).format("YYYY-MM") === months[targetMonth]
+      )
+      .sort((a, b) => (a.date < b.date ? -1 : 1));
+    console.log(thisMonthSchedules);
+    const afterDates = 42 - monthDates - beforeDates;
+    const arr = thisMonthSchedules.map(schedule =>
+      parseInt(moment(schedule.date).format("D"))
     );
-    console.log(curDates);
-    const firstArray = [...Array(7), undefined];
-    console.log(curSchedules);
-    // const duplicates = curSchedules.filter(
-    //   (item, index) => {
-
-    //     return curSchedules.indexOf(item.date) != index
-    //   }
-    // );
-    // console.log(duplicates);
-    // console.log(secondArray);
+    console.log(arr);
     return (
       <>
         <Tabs
@@ -129,20 +116,22 @@ class Calendar extends React.Component {
         <WeekDays />
         <div className="schedules">
           {/* 第一周 */}
+
+          {/* 第二周 */}
           <ul className="schedules__row">
-            {beforeArray.map((date, i) => (
-              <li key={i} className="schedules__item no-data other-month"></li>
+            {[...Array(beforeDates)].map((empty, index) => (
+              <li
+                key={index}
+                className="schedules__item no-data other-month"
+              ></li>
             ))}
-            {[...Array(7 - beforeDates)].map((date, i) => {
-              if (curDates.indexOf(i + 1) > -1) {
-                console.log(i);
-                console.log(curDates.indexOf(i));
-                console.log(curDates.indexOf(i) > -1);
+            {[...Array(monthDates).keys()].map((date, index) => {
+              if (arr.indexOf(index + 1) > -1) {
                 return (
-                  <li key={i} className="schedules__item">
+                  <li key={index} className="schedules__item">
                     <div className="schedules__item__time-info">
                       <span className="schedules__item__time-info__date">
-                        {i + 1}
+                        {index + 1}
                       </span>
                       <span className="schedules__item__time-info__weekday">
                         星期四
@@ -167,12 +156,11 @@ class Calendar extends React.Component {
                   </li>
                 );
               } else {
-                console.log(i);
                 return (
-                  <li key={i} className="schedules__item no-data">
+                  <li key={index} className="schedules__item no-data">
                     <div className="schedules__item__time-info">
                       <span className="schedules__item__time-info__date">
-                        {i + 1}
+                        {index + 1}
                       </span>
                       <span className="schedules__item__time-info__weekday">
                         星期四
@@ -185,72 +173,14 @@ class Calendar extends React.Component {
                 );
               }
             })}
-            {/* <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">1</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed">
-                  成團
-                </span>
-              </div>
-              <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status hasChance">
-                  候補
-                </span>
-                <span>可賣：0</span>
-                <span>團位：20</span>
-                <span className="schedules__item__status-info__guaranteed">
-                  成團
-                </span>
-                <span className="schedules__item__status-info__price">
-                  $234,567
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">2</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">3</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed">
-                  成團
-                </span>
-              </div>
-              <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status hasChance">
-                  預定
-                </span>
-                <span>可賣：0</span>
-                <span>團位：20</span>
-                <span className="schedules__item__status-info__guaranteed">
-                  成團
-                </span>
-                <span className="schedules__item__status-info__price">
-                  $234,567
-                </span>
-              </div>
-            </li> */}
+            {[...Array(afterDates)].map((empty, index) => (
+              <li
+                key={index}
+                className="schedules__item no-data other-month"
+              ></li>
+            ))}
           </ul>
-          {/* 第二周 */}
-          <ul className="schedules__row">
+          {/* <ul className="schedules__row">
             <li className="schedules__item">
               <div className="schedules__item__time-info">
                 <span className="schedules__item__time-info__date">4</span>
@@ -380,9 +310,6 @@ class Calendar extends React.Component {
                 </span>
               </div>
             </li>
-          </ul>
-          {/* 第三周 */}
-          <ul className="schedules__row">
             <li className="schedules__item no-data">
               <div className="schedules__item__time-info">
                 <span className="schedules__item__time-info__date">11</span>
@@ -474,7 +401,6 @@ class Calendar extends React.Component {
               </div>
             </li>
           </ul>
-          {/* 第四周 */}
           <ul className="schedules__row">
             <li className="schedules__item no-data">
               <div className="schedules__item__time-info">
@@ -553,9 +479,6 @@ class Calendar extends React.Component {
                 </span>
               </div>
             </li>
-          </ul>
-          {/* 第五周 */}
-          <ul className="schedules__row">
             <li className="schedules__item no-data">
               <div className="schedules__item__time-info">
                 <span className="schedules__item__time-info__date">25</span>
@@ -623,9 +546,6 @@ class Calendar extends React.Component {
               </div>
             </li>
             <li className="schedules__item no-data other-month"></li>
-          </ul>
-          {/* 第六周 */}
-          <ul className="schedules__row">
             <li className="schedules__item no-data other-month"></li>
             <li className="schedules__item no-data other-month"></li>
             <li className="schedules__item no-data other-month"></li>
@@ -633,7 +553,7 @@ class Calendar extends React.Component {
             <li className="schedules__item no-data other-month"></li>
             <li className="schedules__item no-data other-month"></li>
             <li className="schedules__item no-data other-month"></li>
-          </ul>
+          </ul> */}
         </div>
       </>
     );
