@@ -67,8 +67,14 @@ class Calendar extends React.Component {
     this.setState(() => ({ isList: !this.state.isList }));
   };
 
-  handlePage = curPage => {
-    this.setState(() => ({ curPage }));
+  handlePrevPage = () => {
+    const { curPage } = this.state;
+    if (curPage > 1) this.setState(() => ({ curPage: curPage - 1 }));
+  };
+
+  handleNextPage = totalPage => {
+    const { curPage } = this.state;
+    if (curPage < totalPage) this.setState(() => ({ curPage: curPage + 1 }));
   };
 
   setFirstPage = () => {
@@ -110,7 +116,8 @@ class Calendar extends React.Component {
       handlePrevMonth,
       handleNextMonth,
       handleTargetMonth,
-      handlePage
+      handlePrevPage,
+      handleNextPage
     } = this;
 
     // 上個月
@@ -290,7 +297,10 @@ class Calendar extends React.Component {
           </ul>
           {isList && (
             <div className="schedule__pagination">
-              <ul className="schedule__pages">
+              <span className="" onClick={() => handlePrevPage()}>
+                上一頁
+              </span>
+              {/* <ul className="schedule__pages">
                 {[...Array(totalPage).keys()].map(page => (
                   <li
                     onClick={() => handlePage(page + 1)}
@@ -300,7 +310,8 @@ class Calendar extends React.Component {
                     {page + 1}/{totalPage}
                   </li>
                 ))}
-              </ul>
+              </ul> */}
+              <span onClick={() => handleNextPage(totalPage)}>下一頁</span>
             </div>
           )}
         </div>
