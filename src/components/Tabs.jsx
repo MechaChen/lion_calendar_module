@@ -9,6 +9,7 @@ const Tabs = ({
   handleNextMonth,
   handleTargetMonth
 }) => {
+  console.log(months);
   return (
     <div className="tab-wrapper">
       <a

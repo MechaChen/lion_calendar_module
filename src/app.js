@@ -3,36 +3,17 @@ import ReactDOM from "react-dom";
 import moment from "moment";
 import axios from "axios";
 import commaNumber from "comma-number";
+import configureStore from "./store/configureStore";
+import { handlePrevMonth } from "./actions/tabs";
 import Tabs from "./components/Tabs.jsx";
 import WeekDays from "./components/WeekDays.jsx";
 import "reset.css/reset.css";
 import "./styles/style.scss";
 
-class Calendar extends React.Component {
-  state = {
-    months: [],
-    // Middle Show Month Index
-    mMonth: 1,
-    targetMonth: 1,
-    schedules: [],
-    thisMonthSchedules: [],
-    isList: false,
-    curPage: 1
-  };
+const { getState, dispatch } = configureStore();
 
-  handlePrevMonth = () => {
-    this.setState(({ mMonth, targetMonth }) => {
-      if (mMonth > 1) {
-        return {
-          mMonth: mMonth - 1,
-          targetMonth: mMonth - 1
-        };
-      } else if (targetMonth === 1) {
-        return { targetMonth: targetMonth - 1 };
-      }
-    });
-    this.setFirstPage();
-  };
+class Calendar extends React.Component {
+  state = getState();
 
   handleNextMonth = () => {
     const { months } = this.state;
@@ -113,7 +94,7 @@ class Calendar extends React.Component {
 
     // Method
     const {
-      handlePrevMonth,
+      // handlePrevMonth,
       handleNextMonth,
       handleTargetMonth,
       handlePrevPage,
@@ -139,7 +120,6 @@ class Calendar extends React.Component {
     const thisMonthDates = thisMonthSchedules.map(schedule =>
       parseInt(moment(schedule.date).format("D"))
     );
-    console.log(thisMonthSchedules);
     const totalPage = Math.ceil(thisMonthSchedules.length / 8);
     const pageList = [];
     for (let i = 0; i < totalPage; i++) {
@@ -147,10 +127,10 @@ class Calendar extends React.Component {
       const end = (i + 1) * 8;
       pageList.push(thisMonthSchedules.slice(start, end));
     }
-    console.log(pageList);
     const start = (curPage - 1) * 8;
     const end = curPage * 8;
     const listArr = thisMonthSchedules.slice(start, end);
+    console.log(this.state);
 
     return (
       <>
@@ -163,7 +143,7 @@ class Calendar extends React.Component {
           months={months}
           mMonth={mMonth}
           targetMonth={targetMonth}
-          handlePrevMonth={handlePrevMonth}
+          handlePrevMonth={() => dispatch(handlePrevMonth)}
           handleNextMonth={handleNextMonth}
           handleTargetMonth={handleTargetMonth}
         />
