@@ -60,28 +60,30 @@ class Calendar extends React.Component {
   componentDidMount() {
     const { targetMonth } = this.state;
     axios.get("./json/data1.json").then(({ data }) => {
+      const schedules = data.reduce(function(all, schedule) {
+        const newDate = schedule.date.replace(/\//g, "-");
+        return all.concat({ ...schedule, date: newDate });
+      }, []);
       let months = [];
-      data.filter(({ date }) => {
-        const month = moment(date.replace(/\//g, "-")).format("YYYY-MM");
+      schedules.filter(({ date }) => {
+        const month = moment(date).format("YYYY-MM");
         if (months.indexOf(month) === -1) months = [...months, month];
       });
       months.sort((a, b) => (a < b ? -1 : 1));
-      this.setState(() => ({ months, schedules: data }));
-      let thisMonthSchedules = this.state.schedules.filter(
-        ({ date }) =>
-          moment(date.replace(/\//g, "-")).format("YYYY-MM") ===
-          this.state.months[this.state.targetMonth]
-      );
-      this.setState(() => ({ thisMonthSchedules }));
       const firstWeekDay = moment(months[targetMonth])
         .startOf("month")
         .weekday();
-      this.setState(() => ({ firstWeekDay }));
+      this.setState(() => ({
+        schedules,
+        months,
+        firstWeekDay
+      }));
     });
   }
 
   render() {
     const {
+      schedules,
       months,
       mMonth,
       targetMonth,
@@ -91,9 +93,29 @@ class Calendar extends React.Component {
     const { handlePrevMonth, handleNextMonth, handleTargetMonth } = this;
     const scheduleDates = thisMonthSchedules
       .map(({ date }) => {
-        return moment(date.replace(/\//g, "-")).date();
+        return moment(date).date();
       })
       .sort((a, b) => (a < b ? -1 : 1));
+    const curMonth = months[targetMonth];
+    const beforeDates = moment(curMonth).weekday();
+    const beforeArray = [...Array(beforeDates)];
+    const curSchedules = schedules.filter(
+      schedule => moment(schedule.date).format("YYYY-MM") === curMonth
+    );
+    const curDates = curSchedules.map(curSchedule =>
+      parseInt(moment(curSchedule.date).format("D"))
+    );
+    console.log(curDates);
+    const firstArray = [...Array(7), undefined];
+    console.log(curSchedules);
+    // const duplicates = curSchedules.filter(
+    //   (item, index) => {
+
+    //     return curSchedules.indexOf(item.date) != index
+    //   }
+    // );
+    // console.log(duplicates);
+    // console.log(secondArray);
     return (
       <>
         <Tabs
@@ -108,21 +130,19 @@ class Calendar extends React.Component {
         <div className="schedules">
           {/* 第一周 */}
           <ul className="schedules__row">
-            {[...Array(7).keys()].map(key => {
-              if (key < firstWeekDay) {
+            {beforeArray.map((date, i) => (
+              <li key={i} className="schedules__item no-data other-month"></li>
+            ))}
+            {[...Array(7 - beforeDates)].map((date, i) => {
+              if (curDates.indexOf(i + 1) > -1) {
+                console.log(i);
+                console.log(curDates.indexOf(i));
+                console.log(curDates.indexOf(i) > -1);
                 return (
-                  <li
-                    key={key}
-                    className="schedules__item no-data other-month"
-                  ></li>
-                );
-              } else if (scheduleDates.indexOf(key - firstWeekDay + 1) > -1) {
-                console.log(scheduleDates.indexOf(key - firstWeekDay + 1));
-                return (
-                  <li key={key} className="schedules__item">
+                  <li key={i} className="schedules__item">
                     <div className="schedules__item__time-info">
                       <span className="schedules__item__time-info__date">
-                        {key - firstWeekDay + 1}
+                        {i + 1}
                       </span>
                       <span className="schedules__item__time-info__weekday">
                         星期四
@@ -146,13 +166,13 @@ class Calendar extends React.Component {
                     </div>
                   </li>
                 );
-              } else if (scheduleDates.indexOf(key - firstWeekDay + 1) === -1) {
-                console.log(key - firstWeekDay + 1);
+              } else {
+                console.log(i);
                 return (
-                  <li key={key} className="schedules__item no-data">
+                  <li key={i} className="schedules__item no-data">
                     <div className="schedules__item__time-info">
                       <span className="schedules__item__time-info__date">
-                        {key - firstWeekDay + 1}
+                        {i + 1}
                       </span>
                       <span className="schedules__item__time-info__weekday">
                         星期四
