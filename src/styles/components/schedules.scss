@@ -160,11 +160,13 @@
   bottom: 0;
   width: 100%;
   height: 30px;
+  display: flex;
+  justify-content: space-between;
 }
 
-.schedule__pages {
-  display: flex;
-  justify-content: center;
+.schedule__pagination__btn {
+  padding: 0 10px;
+  cursor: pointer;
 }
 
 .schedule__page {

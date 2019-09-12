@@ -297,21 +297,21 @@ class Calendar extends React.Component {
           </ul>
           {isList && (
             <div className="schedule__pagination">
-              <span className="" onClick={() => handlePrevPage()}>
+              <span
+                className="schedule__pagination__btn"
+                onClick={() => handlePrevPage()}
+              >
                 上一頁
               </span>
-              {/* <ul className="schedule__pages">
-                {[...Array(totalPage).keys()].map(page => (
-                  <li
-                    onClick={() => handlePage(page + 1)}
-                    className="schedule__page"
-                    key={page}
-                  >
-                    {page + 1}/{totalPage}
-                  </li>
-                ))}
-              </ul> */}
-              <span onClick={() => handleNextPage(totalPage)}>下一頁</span>
+              <span>
+                {curPage}/{totalPage}
+              </span>
+              <span
+                className="schedule__pagination__btn"
+                onClick={() => handleNextPage(totalPage)}
+              >
+                下一頁
+              </span>
             </div>
           )}
         </div>
