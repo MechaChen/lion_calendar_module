@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import moment from "moment";
 import axios from "axios";
+import commaNumber from "comma-number";
 import Tabs from "./components/Tabs.jsx";
 import WeekDays from "./components/WeekDays.jsx";
 import "reset.css/reset.css";
@@ -15,7 +16,9 @@ class Calendar extends React.Component {
     targetMonth: 1,
     schedules: [],
     thisMonthSchedules: [],
-    firstWeekDay: undefined
+    firstWeekDay: undefined,
+    isList: false,
+    curPage: 1
   };
 
   handlePrevMonth = () => {
@@ -57,6 +60,10 @@ class Calendar extends React.Component {
     console.log(e.target);
   };
 
+  handleList = () => {
+    this.setState(() => ({ isList: !this.state.isList }));
+  };
+
   componentDidMount() {
     const { targetMonth } = this.state;
     axios.get("./json/data1.json").then(({ data }) => {
@@ -82,7 +89,7 @@ class Calendar extends React.Component {
   }
 
   render() {
-    const { schedules, months, mMonth, targetMonth } = this.state;
+    const { schedules, months, mMonth, targetMonth, isList } = this.state;
     const { handlePrevMonth, handleNextMonth, handleTargetMonth } = this;
     const beforeDates = moment(months[targetMonth]).weekday();
     const monthDates = parseInt(
@@ -90,21 +97,25 @@ class Calendar extends React.Component {
         .endOf("month")
         .format("DD")
     );
-    console.log(monthDates);
     const thisMonthSchedules = schedules
       .filter(
         schedule =>
           moment(schedule.date).format("YYYY-MM") === months[targetMonth]
       )
       .sort((a, b) => (a.date < b.date ? -1 : 1));
-    console.log(thisMonthSchedules);
     const afterDates = 42 - monthDates - beforeDates;
     const arr = thisMonthSchedules.map(schedule =>
       parseInt(moment(schedule.date).format("D"))
     );
-    console.log(arr);
+    const listArr = thisMonthSchedules.slice(0, 8);
+    console.log(listArr);
     return (
       <>
+        <div className="toggleList">
+          <button onClick={this.handleList}>
+            {isList ? "切換月曆模式" : "切換選單模式"}
+          </button>
+        </div>
         <Tabs
           months={months}
           mMonth={mMonth}
@@ -113,447 +124,133 @@ class Calendar extends React.Component {
           handleNextMonth={handleNextMonth}
           handleTargetMonth={handleTargetMonth}
         />
-        <WeekDays />
+        {!isList && <WeekDays />}
         <div className="schedules">
-          {/* 第一周 */}
-
-          {/* 第二周 */}
-          <ul className="schedules__row">
-            {[...Array(beforeDates)].map((empty, index) => (
-              <li
-                key={index}
-                className="schedules__item no-data other-month"
-              ></li>
-            ))}
-            {[...Array(monthDates).keys()].map((date, index) => {
-              if (arr.indexOf(index + 1) > -1) {
-                return (
-                  <li key={index} className="schedules__item">
-                    <div className="schedules__item__time-info">
-                      <span className="schedules__item__time-info__date">
-                        {index + 1}
-                      </span>
-                      <span className="schedules__item__time-info__weekday">
-                        星期四
-                      </span>
+          <ul className={`schedules__row ${isList ? "list" : ""}`}>
+            {/* 月曆 */}
+            {!isList &&
+              [...Array(beforeDates)].map((empty, index) => (
+                <li
+                  key={index}
+                  className="schedules__item no-data other-month"
+                ></li>
+              ))}
+            {!isList &&
+              [...Array(monthDates).keys()].map((date, index) => {
+                if (arr.indexOf(index + 1) > -1) {
+                  const schedule = thisMonthSchedules[arr.indexOf(index + 1)];
+                  return (
+                    <li key={index} className="schedules__item">
+                      <div className="schedules__item__time-info">
+                        <span className="schedules__item__time-info__date">
+                          {index + 1}
+                        </span>
+                        <span className="schedules__item__time-info__weekday">
+                          {moment(schedule.date)
+                            .locale("zh-tw")
+                            .format("dddd")}
+                        </span>
+                        <span
+                          className={`schedules__item__time-info__guaranteed ${
+                            schedule.guaranteed ? "" : "not-guaran"
+                          }`}
+                        >
+                          {schedule.guaranteed && "成團"}
+                        </span>
+                      </div>
+                      <div className="schedules__item__status-info">
+                        <span
+                          className={`schedules__item__status-info__status ${
+                            schedule.status === "報名" ||
+                            schedule.status === "候補" ||
+                            schedule.status === "預定"
+                              ? "hasChance"
+                              : "noChance"
+                          }`}
+                        >
+                          {schedule.status}
+                        </span>
+                        <span>可賣：{schedule.availableVancancy}</span>
+                        <span>團位：{schedule.totalVacnacy}</span>
+                        {schedule.guaranteed && (
+                          <span className="schedules__item__status-info__guaranteed">
+                            成團
+                          </span>
+                        )}
+                        <span className="schedules__item__status-info__price">
+                          ${commaNumber(schedule.price)}
+                        </span>
+                      </div>
+                    </li>
+                  );
+                } else {
+                  return (
+                    <li key={index} className="schedules__item no-data">
+                      <div className="schedules__item__time-info">
+                        <span className="schedules__item__time-info__date">
+                          {index + 1}
+                        </span>
+                        <span className="schedules__item__time-info__weekday">
+                          星期四
+                        </span>
+                        <span className="schedules__item__time-info__guaranteed not-enough">
+                          成團
+                        </span>
+                      </div>
+                    </li>
+                  );
+                }
+              })}
+            {!isList &&
+              [...Array(afterDates)].map((empty, index) => (
+                <li
+                  key={index}
+                  className="schedules__item no-data other-month"
+                ></li>
+              ))}
+            {/* 列表 */}
+            {isList &&
+              listArr.map((schedule, index) => (
+                <li key={index} className="schedules__item">
+                  <div className="schedules__item__time-info">
+                    <span className="schedules__item__time-info__date">
+                      {moment(schedule.date).format("D")}
+                    </span>
+                    <span className="schedules__item__time-info__weekday">
+                      {moment(schedule.date)
+                        .locale("zh-tw")
+                        .format("dddd")}
+                    </span>
+                    {schedule.guaranteed && (
                       <span className="schedules__item__time-info__guaranteed">
                         成團
                       </span>
-                    </div>
-                    <div className="schedules__item__status-info">
-                      <span className="schedules__item__status-info__status hasChance">
-                        候補
-                      </span>
-                      <span>可賣：0</span>
-                      <span>團位：20</span>
-                      <span className="schedules__item__status-info__guaranteed">
-                        成團
-                      </span>
-                      <span className="schedules__item__status-info__price">
-                        $234,567
-                      </span>
-                    </div>
-                  </li>
-                );
-              } else {
-                return (
-                  <li key={index} className="schedules__item no-data">
-                    <div className="schedules__item__time-info">
-                      <span className="schedules__item__time-info__date">
-                        {index + 1}
-                      </span>
-                      <span className="schedules__item__time-info__weekday">
-                        星期四
-                      </span>
-                      <span className="schedules__item__time-info__guaranteed not-enough">
-                        成團
-                      </span>
-                    </div>
-                  </li>
-                );
-              }
-            })}
-            {[...Array(afterDates)].map((empty, index) => (
-              <li
-                key={index}
-                className="schedules__item no-data other-month"
-              ></li>
-            ))}
+                    )}
+                  </div>
+                  <div className="schedules__item__status-info">
+                    <span
+                      className={`schedules__item__status-info__status ${
+                        schedule.status === "報名" ||
+                        schedule.status === "候補" ||
+                        schedule.status === "預定"
+                          ? "hasChance"
+                          : "noChance"
+                      }`}
+                    >
+                      {schedule.status}
+                    </span>
+                    <span>可賣：{schedule.availableVancancy}</span>
+                    <span>團位：{schedule.totalVacnacy}</span>
+                    <span className="schedules__item__status-info__guaranteed">
+                      {schedule.guaranteed && "成團"}
+                    </span>
+                    <span className="schedules__item__status-info__price">
+                      ${commaNumber(schedule.price)}
+                    </span>
+                  </div>
+                </li>
+              ))}
           </ul>
-          {/* <ul className="schedules__row">
-            <li className="schedules__item">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">4</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed">
-                  成團
-                </span>
-              </div>
-              <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status hasChance">
-                  候補
-                </span>
-                <span>可賣：0</span>
-                <span>團位：20</span>
-                <span className="schedules__item__status-info__guaranteed">
-                  成團
-                </span>
-                <span className="schedules__item__status-info__price">
-                  $234,567
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">5</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed">
-                  成團
-                </span>
-              </div>
-              <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status hasChance">
-                  請洽專員
-                </span>
-                <span>可賣：0</span>
-                <span>團位：20</span>
-                <span className="schedules__item__status-info__guaranteed">
-                  成團
-                </span>
-                <span className="schedules__item__status-info__price">
-                  $234,567
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">6</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item target">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">7</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed">
-                  成團
-                </span>
-              </div>
-              <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status noChance">
-                  關團
-                </span>
-                <span>可賣：0</span>
-                <span>團位：20</span>
-                <span className="schedules__item__status-info__guaranteed">
-                  成團
-                </span>
-                <span className="schedules__item__status-info__price">
-                  $234,567
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">8</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">9</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-              <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status noChance">
-                  額滿
-                </span>
-                <span>可賣：0</span>
-                <span>團位：20</span>
-                <span className="schedules__item__status-info__guaranteed">
-                  成團
-                </span>
-                <span className="schedules__item__status-info__price">
-                  $234,567
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">10</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">11</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">12</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed">
-                  成團
-                </span>
-              </div>
-              <div className="schedules__item__status-info">
-                <span className="schedules__item__status-info__status hasChance">
-                  候補
-                </span>
-                <span>可賣：0</span>
-                <span>團位：20</span>
-                <span className="schedules__item__status-info__guaranteed ">
-                  成團
-                </span>
-                <span className="schedules__item__status-info__price">
-                  $234,567
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">13</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">14</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">15</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">16</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">17</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-          </ul>
-          <ul className="schedules__row">
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">18</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">19</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">20</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">21</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">22</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">23</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">24</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">25</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">26</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">27</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">28</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">29</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data">
-              <div className="schedules__item__time-info">
-                <span className="schedules__item__time-info__date">30</span>
-                <span className="schedules__item__time-info__weekday">
-                  星期四
-                </span>
-                <span className="schedules__item__time-info__guaranteed not-enough">
-                  成團
-                </span>
-              </div>
-            </li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-            <li className="schedules__item no-data other-month"></li>
-          </ul> */}
         </div>
       </>
     );

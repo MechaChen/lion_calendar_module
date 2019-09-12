@@ -73,6 +73,9 @@
     &.not-enough {
       visibility: hidden;
     }
+    &.not-guaran {
+      background-color: transparent;
+    }
   }
 }
 
