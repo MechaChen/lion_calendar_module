@@ -1,6 +1,7 @@
 import React from 'react';
 import commaNumber from "comma-number";
 import moment from 'moment';
+import { connect } from 'react-redux';
 
 const Schedules = ({
     isList,
@@ -222,4 +223,15 @@ const Schedules = ({
     );
 }
 
-export default Schedules;
+const mapStateToProps = (
+  {isList, months, targetMonth, schedules, curPage, targetItem}
+) => ({
+    isList,
+    months,
+    targetMonth,
+    schedules,
+    curPage,
+    targetItem,
+  })
+
+export default connect(mapStateToProps)(Schedules);

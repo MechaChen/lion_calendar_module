@@ -1,18 +1,21 @@
 import React from "react";
 import moment from "moment";
+import { connect } from 'react-redux';
+import { handlePrevMonth, handleNextMonth, handleTargetMonth } from '../actions/tabs';
 
 const Tabs = ({ 
+    dispatch,
     months, 
     mMonth, 
     targetMonth, 
-    handlePrevMonth, 
-    handleNextMonth, 
-    handleTargetMonth 
+    // handlePrevMonth, 
+    // handleNextMonth, 
+    // handleTargetMonth 
   }) => {
     return (
       <div className="tab-wrapper">
         <a
-          onClick={handlePrevMonth}
+          onClick={() => dispatch(handlePrevMonth())}
           className="tab-wrapper__prev-btn"
           href="none:"
         ></a>
@@ -22,7 +25,7 @@ const Tabs = ({
               return (
                 <li
                   key={index}
-                  onClick={() => handleTargetMonth(index)}
+                  onClick={() => dispatch(handleTargetMonth(index))}
                   className={`tab-wrapper__tab ${
                     targetMonth === index ? "target" : ""
                   }`}
@@ -38,7 +41,7 @@ const Tabs = ({
           })}
         </ul>
         <a
-          onClick={handleNextMonth}
+          onClick={() => dispatch(handleNextMonth())}
           className="tab-wrapper__next-btn"
           href="none:"
         ></a>
@@ -46,4 +49,10 @@ const Tabs = ({
     );
 };
 
-export default Tabs;
+const mapStateToProps = ({months, targetMonth, mMonth}) => ({
+  months,
+  targetMonth,
+  mMonth
+})
+
+export default connect(mapStateToProps)(Tabs);
