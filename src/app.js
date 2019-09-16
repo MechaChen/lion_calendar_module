@@ -6,8 +6,15 @@ import Mode from "./components/Mode.jsx";
 import Tabs from "./components/Tabs.jsx";
 import WeekDays from "./components/WeekDays.jsx";
 import Schedules from './components/Schedules.jsx';
+import configureStore from './store/configureStore'
+import { handlePrevMonth } from './actions/tabs'
 import "reset.css/reset.css";
 import "./styles/style.scss";
+
+const store = configureStore();
+console.log(store.getState());
+store.dispatch(handlePrevMonth());
+console.log(store.getState());
 
 class Calendar extends React.Component {
   state = {
@@ -24,14 +31,14 @@ class Calendar extends React.Component {
   handlePrevMonth = e => {
     const { mMonth, targetMonth } = this.state;
     if (mMonth > 1) 
-    this.setState({
-      mMonth: mMonth - 1,
-      targetMonth: mMonth - 1
-    });
+      this.setState({
+        mMonth: mMonth - 1,
+        targetMonth: mMonth - 1
+      });
     else if (targetMonth === 1) 
-    this.setState({ 
-      targetMonth: targetMonth - 1 
-    });
+      this.setState({ 
+        targetMonth: targetMonth - 1 
+      });
 
     const monthSchedules = this.getMonthSchedules();
     this.props.onClickPrev(e.target, monthSchedules);
