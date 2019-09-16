@@ -8,35 +8,6 @@ body {
 }
 
 #calendar {
-  width: 55%;
-  min-width: 600px;
+  width: 480px;
   margin: 10px auto 0;
-}
-
-button {
-  border: none;
-  outline: none;
-  background: #66f;
-  padding: 2px 5px;
-  font-family: Microsoft JhengHei;
-  color: #fff;
-  border-radius: 10px;
-  position: relative;
-  top: -3px;
-  box-shadow: 0 3px 0px darken(#66f, 10%);
-  margin-bottom: 5px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.toggleList {
-  padding: 3px;
-  cursor: pointer;
-  display: inline-block;
-  &:hover {
-    button {
-      top: 0;
-      box-shadow: 0 0 0 darken(#66f, 10%);
-    }
-  }
 }

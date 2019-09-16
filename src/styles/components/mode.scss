@@ -1,0 +1,30 @@
+button {
+  border: none;
+  background: none;
+  outline: none;
+  padding: 2px 5px;
+  font-family: Microsoft JhengHei;
+  color: $buttonColor;
+  font-size: 16px;
+  position: relative;
+  top: -3px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mode {
+  padding: 3px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.mode__pic {
+  width: 18px;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.mode__text {
+  vertical-align: middle;
+}

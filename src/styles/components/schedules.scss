@@ -42,6 +42,9 @@
     z-index: 10;
     pointer-events: none;
   }
+  div {
+    pointer-events: none;
+  }
 }
 
 .list {
@@ -159,14 +162,52 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 30px;
+  padding-bottom: 15px;
   display: flex;
   justify-content: space-between;
 }
 
 .schedule__pagination__btn {
-  padding: 0 10px;
-  cursor: pointer;
+  &--prev,
+  &--next {
+    margin: 0 15px;
+    cursor: pointer;
+    color: $buttonColor;
+    position: relative;
+    border-bottom: 1px solid transparent;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -13px;
+      width: 0;
+      height: 0;
+      margin: auto;
+      border-top: 4.5px solid transparent;
+      border-left: 4.5px solid transparent;
+      border-right: 4.5px solid $arrowColor;
+      border-bottom: 4.5px solid transparent;
+    }
+    &:hover {
+      border-bottom: 1px solid $buttonColor;
+    }
+    &.edge {
+      visibility: hidden;
+    }
+  }
+  &--next {
+    &::after {
+      border-left: 4.5px solid $arrowColor;
+      border-right: 4.5px solid transparent;
+      left: auto;
+      right: -13px;
+    }
+  }
+}
+
+.schedule__pagination__cur-page {
+  color: #444;
 }
 
 .schedule__page {
